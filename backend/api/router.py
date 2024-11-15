@@ -8,5 +8,5 @@ router = APIRouter()
 @router.get('/CarbonDioxideBalance')
 async def carbonDioxideBalance( km: int) :
     conv = (km * 149)/1000
-    response = CarbonDioxideConversionResponse("KgCO2/km", conv)
+    response = CarbonDioxideConversionResponse(unit="KgCO2/km", result=conv)
     return response
