@@ -1,12 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from const.router import router  
+from api.router import router  
 from const.const import DESCRIPTION, NAME, TITLE
 
 def app() -> FastAPI:
 
-    """Creates the multi_agent app."""
-    print("Creating the multi_agent app...")
     app = FastAPI(
         title=TITLE,
         docs_url="/{NAME}/docs",
@@ -25,11 +23,12 @@ def app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    app.include_router(router.router)
+    app.include_router(router)
     
     return app
 
 app()
+
 
 @app.get("/")
 def root():
