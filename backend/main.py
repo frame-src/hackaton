@@ -27,8 +27,7 @@ def app() -> FastAPI:
     
     return app
 
-app()
-
+app = app()
 
 @app.get("/")
 def root():
