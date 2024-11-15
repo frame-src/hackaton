@@ -9,6 +9,6 @@ services:
     networks:
       - clima
     volumes:
-      - .:/app
+      - ./backend:/app
 networks:
   clima:
