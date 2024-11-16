@@ -4,37 +4,34 @@ import pandas as pd
 import streamlit as st
 from streamlit_option_menu import option_menu
 import requests
-
+from utils import lengthCalculator,moneySavedPetrol, moneySavedElectric
 st.set_page_config(
     layout = 'wide',
     page_title = 'MFT'
 )
 
+
 # with st.sidebar:
 selected = option_menu(
     menu_title= None,
-    options=["Home", "Maps", "Achievments"],
+    options=["Home", "Maps", "Activity"],
     icons=["house", "book", "activity"],
     menu_icon="cast",
     default_index=0,
     orientation="horizontal"
 )
 
-def copyAndFill(toFill:any, toFillWith:any):
-    copyToFillWith = toFillWith.copy()
-    copyToFillWith ['CO2_kg'] = 0
-    new = pd.concat([toFill,], ignore_index=True)
-    return new
-
-
 # HOME
 if selected == "Home":
-	"""
-	# Welcome to MFT
-	"""
+	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
 	# Read the CSV file
 	df = pd.read_csv("./content/ID_163.csv")
+	length = round(lengthCalculator(df))
+	petrol_consumption =  round(moneySavedPetrol(length))
+	electric_consumption = round(moneySavedElectric(length))
+	st.markdown(f"<h5 style='text-align: center; color: lightcoral;'>Consuption of CO2 : </h4>", unsafe_allow_html=True)
+    
 	df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
 	for _, row in df.iterrows():
 		if row['Mode'] == 'car':
@@ -56,7 +53,7 @@ if selected == "Home":
 
 	# Create an Altair area chart
 	chart = alt.Chart(df).mark_area().encode(
-		x='StartedAt_Timestamp:T',
+		x=alt.X('StartedAt_Timestamp:T', title='Time'),
 		y='CO2_kg:Q',
 		color=alt.Color('Mode:N', scale=color_scale),
 		tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
@@ -68,8 +65,14 @@ if selected == "Home":
 	).interactive()
 
 	st.altair_chart(chart, use_container_width=True)
-
-    
+	st.markdown(f"""
+    <div style="text-align: center;">
+        <span style='color: grey; font-size: 21px;'>Today you saved: </span>
+        <span style='color: lightcoral; font-size: 21px;'>{petrol_consumption}€ </span>
+        <span style='color: grey; font-size: 21px;'>in Gas, or </span>
+        <span style='color: lightcoral; font-size: 21px;'>{electric_consumption}€ </span>
+        <span style='color: grey; font-size: 21px;'>in Electric over {length}km </span>
+    </div> """, unsafe_allow_html=True)
 
 
 # MAPS
@@ -81,7 +84,7 @@ if selected == "Maps":
 
 
 #PROFILE or ACTIVITIES or ACHIEVMENTS
-if selected == "Achievments":
+if selected == "Activity":
     st.title("PROFILE")
 
 
