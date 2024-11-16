@@ -30,40 +30,22 @@ def copyAndFill(toFill:any, toFillWith:any):
 # HOME
 if selected == "Home":
     """
-    # Welcome to MFT 
-
-    EDIT INFO:
-
+    # Welcome to MFT
     """
-    # df = pd.DataFrame('ID_163')
+
+    # Read the CSV file
     df = pd.read_csv("./content/ID_163.csv")
-    # df = pd.DataFrame({'ID': ['ID_163']})
     df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
 
-    car_data = df[df['Mode'] == "car"]
-    non_car_data = df[df['Mode'] != "car"]
-    filled_car_data = copyAndFill(car_data, non_car_data)
-    filled_non_car_data = copyAndFill(non_car_data, car_data)
+    # Create an Altair area chart
+    chart = alt.Chart(df).mark_area().encode(
+        x='StartedAt_Timestamp:T',
+        y='CO2_kg:Q',
+        color='Mode:N',
+        tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
+    ).interactive()
 
-    st.write(filled_car_data)
-    non_car_data = df[df['Mode'] != "car"]
-    # st.write(non_car_data)
-
-
-    # Align the 'CO2_kg' values with their respective timestamps
-    car_data = car_data[['StartedAt_Timestamp', 'CO2_kg']].set_index('StartedAt_Timestamp')
-    non_car_data = non_car_data[['StartedAt_Timestamp', 'CO2_kg']].set_index('StartedAt_Timestamp')
-
-
-    data = pd.DataFrame(
-        {
-        "col1": df[df['Mode']=="car"],
-        "col2": df[df['Mode']!="car"],
-		}
-    )
-    # chart_data = pd.DataFrame(df,columns=("StartedAt_Timestamp", "CO2_kg"))
-    # st.area_chart(data, x="StartedAt_Timestamp", y="CO2_kg")
-    st.area_chart(df[['StartedAt_Timestamp', 'CO2_kg']], x="StartedAt_Timestamp", y="CO2_kg")
+    st.altair_chart(chart, use_container_width=True)
 
     
 
