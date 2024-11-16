@@ -21,22 +21,23 @@ selected = option_menu(
 )
 
 if selected == "Home":
-    st.title("TITLE")
+    """
+    # Welcome to MFT 
+
+    EDIT INFO:
+
+    """
+    chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
+    st.area_chart(chart_data)
 if selected == "Maps":
-    st.title("TITLE")
-if selected == "Achievements":
-    st.title("TITLE")
+    st.title("MAPS")
+if selected == "Achievments":
+    st.title("PROFILE")
 
-"""
-# Welcome to MFT 
 
-EDIT INFO:
-
-"""
 
 # CHART HERE:
-chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
-st.area_chart(chart_data)
+
 # try:
 #     response = requests.get('http://localhost:8000/Test', headers={'accept': 'application/json'})    
 #     if response.status_code == 200:
