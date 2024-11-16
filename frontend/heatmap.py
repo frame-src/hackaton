@@ -8,7 +8,7 @@ def createMap():
 
 
     initial_point = (49.141720, 9.218849)
-    m = folium.Map(location=initial_point, zoom_start=6, tiles='CartoDB positron', control_scale=True)
+    m = folium.Map(location=initial_point, zoom_start=6, max_zoom=12, tiles='CartoDB positron', control_scale=True)
 
 
     car_layer = folium.FeatureGroup(name="Car", overlay=True)
