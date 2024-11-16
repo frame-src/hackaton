@@ -15,3 +15,8 @@ async def carbonDioxideBalance( km: int) :
 @router.get('/DataLoad')
 async def dataLoadPandas():
     return await loadData()
+
+
+@router.get('/Test')
+async def test():
+    return {'car' :150 , 'other': 50}
