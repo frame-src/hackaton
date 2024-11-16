@@ -14,7 +14,7 @@ st.set_page_config(
 selected = option_menu(
     menu_title= None,
     options=["Home", "Maps", "Achievments"],
-    icons=["house", "book", "crown"],
+    icons=["house", "book", "activity"],
     menu_icon="cast",
     default_index=0,
     orientation="horizontal"
@@ -34,6 +34,7 @@ EDIT INFO:
 
 """
 
+# CHART HERE:
 chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
 st.area_chart(chart_data)
 # try:
