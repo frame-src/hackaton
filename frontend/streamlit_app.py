@@ -20,6 +20,13 @@ selected = option_menu(
     orientation="horizontal"
 )
 
+def copyAndFill(toFill:any, toFillWith:any):
+    copyToFillWith = toFillWith.copy()
+    copyToFillWith ['CO2_kg'] = 0
+    new = pd.concat([toFill,], ignore_index=True)
+    return new
+
+
 # HOME
 if selected == "Home":
     """
@@ -28,7 +35,26 @@ if selected == "Home":
     EDIT INFO:
 
     """
-    df = pd.DataFrame('ID_163')
+    # df = pd.DataFrame('ID_163')
+    df = pd.read_csv("./content/ID_163.csv")
+    # df = pd.DataFrame({'ID': ['ID_163']})
+    df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
+
+    car_data = df[df['Mode'] == "car"]
+    non_car_data = df[df['Mode'] != "car"]
+    filled_car_data = copyAndFill(car_data, non_car_data)
+    filled_non_car_data = copyAndFill(non_car_data, car_data)
+
+    st.write(filled_car_data)
+    non_car_data = df[df['Mode'] != "car"]
+    # st.write(non_car_data)
+
+
+    # Align the 'CO2_kg' values with their respective timestamps
+    car_data = car_data[['StartedAt_Timestamp', 'CO2_kg']].set_index('StartedAt_Timestamp')
+    non_car_data = non_car_data[['StartedAt_Timestamp', 'CO2_kg']].set_index('StartedAt_Timestamp')
+
+
     data = pd.DataFrame(
         {
         "col1": df[df['Mode']=="car"],
@@ -36,7 +62,9 @@ if selected == "Home":
 		}
     )
     # chart_data = pd.DataFrame(df,columns=("StartedAt_Timestamp", "CO2_kg"))
-    st.area_chart(data, x="StartedAt_Timestamp", y="CO2_kg")
+    # st.area_chart(data, x="StartedAt_Timestamp", y="CO2_kg")
+    st.area_chart(df[['StartedAt_Timestamp', 'CO2_kg']], x="StartedAt_Timestamp", y="CO2_kg")
+
     
 
 
