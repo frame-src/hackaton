@@ -7,8 +7,12 @@ def createMap():
     df = pd.read_csv('./content/snapped_data.csv')
 
 
-    initial_point = (49.141720, 9.218849)
-    m = folium.Map(location=initial_point, zoom_start=6, max_zoom=12, tiles='CartoDB positron', control_scale=True)
+    # initial_point = (49.141720, 9.218849)
+    southwest = (49.0914, 9.1419)
+    northeast = (49.1920, 9.2957)
+    bounds = [southwest, northeast]
+
+    m = folium.Map(location=bounds, zoom_start=6, max_zoom=12, tiles='CartoDB positron', control_scale=True)
 
 
     car_layer = folium.FeatureGroup(name="Car", overlay=True)
