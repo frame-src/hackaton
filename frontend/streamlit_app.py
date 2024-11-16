@@ -29,23 +29,45 @@ def copyAndFill(toFill:any, toFillWith:any):
 
 # HOME
 if selected == "Home":
-    """
-    # Welcome to MFT
-    """
+	"""
+	# Welcome to MFT
+	"""
 
-    # Read the CSV file
-    df = pd.read_csv("./content/ID_163.csv")
-    df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
+	# Read the CSV file
+	df = pd.read_csv("./content/ID_163.csv")
+	df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
+	for _, row in df.iterrows():
+		if row['Mode'] == 'car':
+			df.at[_, 'CO2_kg'] = row['CO2_kg'] * -1
+		else:
+			df.at[_, 'CO2_kg'] = row['CO2_kg'] * 10
 
-    # Create an Altair area chart
-    chart = alt.Chart(df).mark_area().encode(
-        x='StartedAt_Timestamp:T',
-        y='CO2_kg:Q',
-        color='Mode:N',
-        tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
-    ).interactive()
+	start_row = pd.DataFrame({'StartedAt_Timestamp': [df['StartedAt_Timestamp'].min().replace(hour=0, minute=0, second=0)],
+                              'CO2_kg': [0], 'Mode': ['']})
+	end_row = pd.DataFrame({'StartedAt_Timestamp': [df['StartedAt_Timestamp'].max().replace(hour=23, minute=59, second=59)],
+                            'CO2_kg': [0], 'Mode': ['']})
+	df = pd.concat([start_row, df, end_row], ignore_index=True)
 
-    st.altair_chart(chart, use_container_width=True)
+	#Color depending on the mode
+	color_scale = alt.Scale(
+		domain=['car', 'train', 'tram', 'bus', 'bike', 'walk'],
+		range=['#FF0000', '#90EE90', '#90EE90', '#90EE90', '#90EE90', '#90EE90']
+		)
+
+	# Create an Altair area chart
+	chart = alt.Chart(df).mark_area().encode(
+		x='StartedAt_Timestamp:T',
+		y='CO2_kg:Q',
+		color=alt.Color('Mode:N', scale=color_scale),
+		tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
+	).transform_filter(
+		alt.datum.Mode != ''
+	).properties(
+		width=700,
+		height=400
+	).interactive()
+
+	st.altair_chart(chart, use_container_width=True)
 
     
 
