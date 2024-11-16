@@ -51,5 +51,16 @@ def createMap():
     m.add_child(walk_layer)
     m.add_child(bicycle_layer)
 
+    custom_css = """
+    .leaflet-control-layers-toggle {
+        display: none;  /* Hide the title */
+    }
+    """
+
+    # Inject the custom CSS into the map
+    style = folium.Element(f'<style>{custom_css}</style>')
+    m.get_root().html.add_child(style)
+
+    # Add LayerControl
     folium.LayerControl(collapsed=False, position='bottomright').add_to(m)
     return m
