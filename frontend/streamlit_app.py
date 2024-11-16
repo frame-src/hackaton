@@ -20,6 +20,8 @@ selected = option_menu(
     orientation="horizontal"
 )
 
+
+# HOME
 if selected == "Home":
     """
     # Welcome to MFT 
@@ -29,8 +31,18 @@ if selected == "Home":
     """
     chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
     st.area_chart(chart_data)
+    
+
+
+# MAPS
 if selected == "Maps":
     st.title("MAPS")
+
+
+
+
+
+#PROFILE or ACTIVITIES or ACHIEVMENTS
 if selected == "Achievments":
     st.title("PROFILE")
 
