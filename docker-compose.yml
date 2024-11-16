@@ -10,5 +10,16 @@ services:
       - clima
     volumes:
       - ./backend:/app
+
+  frontend:
+    build:
+      context: frontend/
+    ports:
+      - "8501:8501"
+    networks:
+      - clima
+    volumes:
+      - ./frontend:/app
+
 networks:
   clima:
