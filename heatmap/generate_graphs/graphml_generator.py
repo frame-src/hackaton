@@ -8,6 +8,6 @@ cycle_network = ox.graph_from_point(point, dist=dist, network_type='bike')
 vehicle_network = ox.graph_from_point(point, dist=dist, network_type='drive') 
 
 # Save them as GraphML files
-ox.save_graphml(walk_network, "walk1.graphml")
-ox.save_graphml(cycle_network, "bicycle1.graphml")
-ox.save_graphml(vehicle_network, "car1.graphml")
+ox.save_graphml(walk_network, "walk.graphml")
+ox.save_graphml(cycle_network, "bicycle.graphml")
+ox.save_graphml(vehicle_network, "car.graphml")
