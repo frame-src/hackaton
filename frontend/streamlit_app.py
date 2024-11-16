@@ -74,10 +74,15 @@ if selected == "Home":
         <span style='color: grey; font-size: 21px;'>in Electric over {length}km </span>
     </div> """, unsafe_allow_html=True)
 
+from heatmap import createMap
+from streamlit_folium import st_folium
 
 # MAPS
 if selected == "Maps":
     st.title("MAPS")
+	m = createMap()
+	st_folium(m, width=725)
+
 
 
 
