@@ -1,2 +1,11 @@
 fastapi
 uvicorn
+
+# Import necessary libraries
+geodatasets
+cartopy
+pandas 
+matplotlib
+geopandas
+cartopy
+geojson
