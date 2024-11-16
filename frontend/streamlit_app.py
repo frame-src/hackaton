@@ -20,7 +20,6 @@ selected = option_menu(
     orientation="horizontal"
 )
 
-
 # HOME
 if selected == "Home":
     """
@@ -29,8 +28,15 @@ if selected == "Home":
     EDIT INFO:
 
     """
-    chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
-    st.area_chart(chart_data)
+    df = pd.DataFrame('ID_163')
+    data = pd.DataFrame(
+        {
+        "col1": df[df['Mode']=="car"],
+        "col2": df[df['Mode']!="car"],
+		}
+    )
+    # chart_data = pd.DataFrame(df,columns=("StartedAt_Timestamp", "CO2_kg"))
+    st.area_chart(data, x="StartedAt_Timestamp", y="CO2_kg")
     
 
 
