@@ -8,11 +8,15 @@ def createMap():
 
 
     # initial_point = (49.141720, 9.218849)
-    southwest = (49.0914, 9.1419)
-    northeast = (49.1920, 9.2957)
-    bounds = [southwest, northeast]
-
-    m = folium.Map(location=bounds, zoom_start=6, max_zoom=12, tiles='CartoDB positron', control_scale=True)
+    # southwest = [49.0914, 9.1419]
+    # northeast = [49.1920, 9.2957]
+    # bounds = [southwest, northeast]
+    MIN_LAT = 49.1030
+    MAX_LAT = 49.1920
+    MIN_LON = 9.1419
+    MAX_LON = 9.2957
+    initial_point = (49.141720, 9.218849)
+    m = folium.Map(location=initial_point,max_lat=MAX_LAT, min_lat=MIN_LAT, max_lon=MAX_LON, min_lon =MIN_LON,  zoom_start=13, max_zoom=19, min_zoom=13, max_bounds=True, tiles='CartoDB positron', control_scale=True)
 
 
     car_layer = folium.FeatureGroup(name="Car", overlay=True)
@@ -47,5 +51,5 @@ def createMap():
     m.add_child(walk_layer)
     m.add_child(bicycle_layer)
 
-    folium.LayerControl(collapsed=False).add_to(m)
+    folium.LayerControl(collapsed=False, position='bottomright').add_to(m)
     return m

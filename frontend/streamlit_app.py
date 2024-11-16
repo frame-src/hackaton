@@ -79,9 +79,8 @@ from streamlit_folium import st_folium
 
 # MAPS
 if selected == "Maps":
-    st.title("MAPS")
-	m = createMap()
-	st_folium(m, width=725)
+    m = createMap()
+    st_folium(m, width=430)
 
 
 
