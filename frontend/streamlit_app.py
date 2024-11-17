@@ -106,17 +106,20 @@ if selected == "Home":
 from heatmap import createMap
 from streamlit_folium import st_folium
 
-rendered_map = "./map.html"
-with open(rendered_map, "r") as file:
-    map_ready = file.read()
-
-# Inject the CSS into the Streamlit app
-# st_folium.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 # MAPS
 if selected == "Maps":
-    m = createMap()
-    st_folium(m, width=430)
+	rendered_map = "./map.html"
+	with open(rendered_map, "r") as file:
+		map_string = file.read()
+		
+	css_file = "./styles.css"
+	with open(rendered_map, "r") as file:
+		css = file.read()
+
+	# Inject the CSS into the Streamlit app
+	st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    
 
 
 
