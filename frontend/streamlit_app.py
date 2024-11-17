@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit_option_menu import option_menu
+import requests
+from utils import lengthCalculator,moneySavedPetrol, moneySavedElectric
 from datetime import datetime, timedelta
 
 st.set_page_config(
@@ -10,8 +12,11 @@ st.set_page_config(
     page_title='MFT'
 )
 
+
 # with st.sidebar:
 selected = option_menu(
+    menu_title= None,
+    options=["Home", "Maps", "Activity"],
     menu_title=None,
     options=["Home", "Maps", "Achievments"],
     icons=["house", "book", "activity"],
@@ -19,6 +24,7 @@ selected = option_menu(
     default_index=0,
     orientation="horizontal"
 )
+
 
 def copyAndFill(toFill: any, toFillWith: any):
     copyToFillWith = toFillWith.copy()
@@ -28,68 +34,57 @@ def copyAndFill(toFill: any, toFillWith: any):
 
 # HOME
 if selected == "Home":
-    """
-    # Welcome to MFT
-    """
+	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
-    # Read the CSV file
-    df = pd.read_csv("./content/ID_163.csv")
-    df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
+	# Read the CSV file
+	df = pd.read_csv("./content/ID_163.csv")
+	length = round(lengthCalculator(df))
+	petrol_consumption =  round(moneySavedPetrol(length))
+	electric_consumption = round(moneySavedElectric(length))
+	st.markdown(f"<h5 style='text-align: center; color: lightcoral;'>Consuption of CO2 : </h4>", unsafe_allow_html=True)
+    
+	df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
+	for _, row in df.iterrows():
+		if row['Mode'] == 'car':
+			df.at[_, 'CO2_kg'] = row['CO2_kg'] * -1
+		else:
+			df.at[_, 'CO2_kg'] = row['CO2_kg'] * 10
 
-    # Adjust CO2_kg for 'car' mode
-    for _, row in df.iterrows():
-        if row['Mode'] == 'car':
-            df.at[_, 'CO2_kg'] = row['CO2_kg'] 
-        else:
-            df.at[_, 'CO2_kg'] = row['CO2_kg'] * -15
+	start_row = pd.DataFrame({'StartedAt_Timestamp': [df['StartedAt_Timestamp'].min().replace(hour=0, minute=0, second=0)],
+                              'CO2_kg': [0], 'Mode': ['']})
+	end_row = pd.DataFrame({'StartedAt_Timestamp': [df['StartedAt_Timestamp'].max().replace(hour=23, minute=59, second=59)],
+                            'CO2_kg': [0], 'Mode': ['']})
+	df = pd.concat([start_row, df, end_row], ignore_index=True)
 
-    # Get the minimum and maximum timestamps for the whole day
-    min_timestamp = df['StartedAt_Timestamp'].min().replace(hour=4, minute=0, second=1)
-    max_timestamp = df['StartedAt_Timestamp'].max().replace(hour=20, minute=59, second=59)
+	#Color depending on the mode
+	color_scale = alt.Scale(
+		domain=['car', 'train', 'tram', 'bus', 'bike', 'walk'],
+		range=['#FF0000', '#90EE90', '#90EE90', '#90EE90', '#90EE90', '#90EE90']
+		)
 
-    # Add an initial row with a timestamp just before the first data point and set the CO2_kg value to 0
-    first_data_timestamp = df['StartedAt_Timestamp'].min()
-    initial_row = pd.DataFrame({'StartedAt_Timestamp': [first_data_timestamp - timedelta(seconds=1)],
-                                'CO2_kg': [0], 'Mode': ['initial']})
-    df = pd.concat([initial_row, df], ignore_index=True)
+	# Create an Altair area chart
+	chart = alt.Chart(df).mark_area().encode(
+		x=alt.X('StartedAt_Timestamp:T', title='Time'),
+		y='CO2_kg:Q',
+		color=alt.Color('Mode:N', scale=color_scale),
+		tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
+	).transform_filter(
+		alt.datum.Mode != ''
+	).properties(
+		width=700,
+		height=400
+	).interactive()
 
-    # Add rows at the beginning and end with the same Mode as the first and last data points
-    start_row = pd.DataFrame({'StartedAt_Timestamp': [min_timestamp],
-                              'CO2_kg': [0], 'Mode': ['initial']})
-    end_row = pd.DataFrame({'StartedAt_Timestamp': [max_timestamp],
-                            'CO2_kg': [df.iloc[-1]['CO2_kg']], 'Mode': [df.iloc[-1]['Mode']]})
-    df = pd.concat([start_row, df, end_row], ignore_index=True)
+	st.altair_chart(chart, use_container_width=True)
+	st.markdown(f"""
+    <div style="text-align: center;">
+        <span style='color: grey; font-size: 21px;'>Today you saved: </span>
+        <span style='color: lightcoral; font-size: 21px;'>{petrol_consumption}€ </span>
+        <span style='color: grey; font-size: 21px;'>in Gas, or </span>
+        <span style='color: lightcoral; font-size: 21px;'>{electric_consumption}€ </span>
+        <span style='color: grey; font-size: 21px;'>in Electric over {length}km </span>
+    </div> """, unsafe_allow_html=True)
 
-    # Ensure the timestamp columns are of type datetime64[ns]
-    df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
-
-    # Define the color scale based on the Mode column
-    color_scale = alt.Scale(
-        domain=['car', 'train', 'tram', 'bus', 'bike', 'walk'],
-        range=['#FF0000', '#00FF00', '#00FF00', '#00FF00', '#00FF00', '#00FF00']
-    )
-
-    # Create a simplified Altair area chart to ensure data is being plotted
-    area_chart = alt.Chart(df).mark_area().encode(
-        x='StartedAt_Timestamp:T',
-        y=alt.Y('CO2_kg:Q', scale=alt.Scale(domain=(0.5, -0.5))),
-        color=alt.Color('Mode:N', scale=color_scale),
-        tooltip=['StartedAt_Timestamp', 'CO2_kg', 'Mode']
-    ).properties(
-        width=700,
-        height=400
-    ).interactive()
-    rule = alt.Chart(pd.DataFrame({'y': [-0.35]})).mark_rule(color='lightgreen').encode(
-		y='y:Q'
-	)
-    text = alt.Chart(pd.DataFrame({'y': [-0.35], 'text': ['Your daily goal of CO2 reduction']})).mark_text(
-		align='left', dx=5, dy=-5, color='black'
-	).encode(
-		y='y:Q',
-		text='text:N'
-	)
-    chart = alt.layer(area_chart, rule, text)
-    st.altair_chart(chart, use_container_width=True)
 
 # MAPS
 if selected == "Maps":
@@ -100,7 +95,7 @@ if selected == "Maps":
 
 
 #PROFILE or ACTIVITIES or ACHIEVMENTS
-if selected == "Achievments":
+if selected == "Activity":
     st.title("PROFILE")
 
 
