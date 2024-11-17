@@ -52,7 +52,8 @@ def createMap():
     m.add_child(bicycle_layer)
 
     custom_css = """
-    .leaflet-control-layers-toggle {
+    .leaflet-control-layers-base {
+        background: black;
         display: none;  /* Hide the title */
     }
     """
