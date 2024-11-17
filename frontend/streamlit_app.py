@@ -32,7 +32,7 @@ food = foodAmountForCalories(length)
 
 # HOME
 if selected == "Home":
-	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
+	st.markdown("<h1 style='text-align: center;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
 	# Read the CSV file
 
@@ -109,11 +109,8 @@ from streamlit_folium import st_folium
 
 # MAPS
 if selected == "Maps":
-	with open("map.html", "r") as f:
-		html_content = f.read()
-
-	# Display the HTML content
-	st.markdown(html_content, unsafe_allow_html=True)
+    m = createMap()
+    st_folium(m, width=430)
 
 
 #PROFILE or ACTIVITIES or ACHIEVMENTS
@@ -170,8 +167,10 @@ if selected == "Activity":
         st.metric("Penguins Saved", penguins_saved)
         if penguins_saved >= 1:
             st.success("🏅 You've unlocked the **Penguin Saver Marathon**!")
+        string = ""
         for i in range(0, penguins_saved):
-                st.success("🐧")
+                string = string + "🐧"
+        st.success(string)
 
     # Carbon Ninja Challenge
     elif challenge == "Carbon Ninja Challenge":
