@@ -109,17 +109,11 @@ from streamlit_folium import st_folium
 
 # MAPS
 if selected == "Maps":
-	rendered_map = "./map.html"
-	with open(rendered_map, "r") as file:
-		map_string = file.read()
-		
-	css_file = "./styles.css"
-	with open(rendered_map, "r") as file:
-		css = file.read()
+	with open("your_page.html", "r") as f:
+		html_content = f.read()
 
-	# Inject the CSS into the Streamlit app
-	st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-	st.components.v1.html(map_string)
+	# Display the HTML content
+	st.markdown(html_content, unsafe_allow_html=True)
 
 
 #PROFILE or ACTIVITIES or ACHIEVMENTS
