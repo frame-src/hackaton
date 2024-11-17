@@ -5,25 +5,34 @@ import pandas as pd
 # Load your CSV file
 df = pd.read_csv('snapped_data.csv')
 
-# Create a map with CartoDB positron background
-initial_coords = ast.literal_eval(df["Snapped_Coords"][0])[0] if df["Snapped_Coords"][0] else [0, 0]
-m = folium.Map(location=initial_coords, zoom_start=12, tiles='CartoDB positron', control_scale=True)
+# Map boundaries and initial setup
+MIN_LAT = 49.1030
+MAX_LAT = 49.1920
+MIN_LON = 9.1419
+MAX_LON = 9.2957
+initial_point = (49.141720, 9.218849)
+m = folium.Map(location=initial_point,
+               max_lat=MAX_LAT,
+               min_lat=MIN_LAT,
+               max_lon=MAX_LON,
+               min_lon=MIN_LON,
+               zoom_start=13,
+               max_zoom=19,
+               min_zoom=13,
+               max_bounds=True,
+               tiles='CartoDB positron',
+               control_scale=True)
 
-# Create FeatureGroups for each mode of transport
-car_layer = folium.FeatureGroup(name="Car", overlay=True)
-walk_layer = folium.FeatureGroup(name="Walk", overlay=True)
-bicycle_layer = folium.FeatureGroup(name="Bicycle", overlay=True)
+bicycle_layer = folium.FeatureGroup(name="🚲 bicycle")
+walk_layer = folium.FeatureGroup(name="🚶 walk")
+car_layer = folium.FeatureGroup(name="🚗 car")
 
-# Loop through all rows in the dataframe
+# Add polylines to respective layers
 for _, row in df.iterrows():
     if row["Snapped_Coords"]:
         try:
-            # Convert the string to a list of coordinates
-            coords = ast.literal_eval(row["Snapped_Coords"])  # Safely convert string to list
-
-            # Ensure that the list of coordinates is not empty
+            coords = ast.literal_eval(row["Snapped_Coords"])
             if coords:
-                # Add to the appropriate layer based on the mode
                 if row["Mode"] == "car":
                     folium.PolyLine(
                         coords, color="#2196F3", weight=10, opacity=0.03
@@ -39,13 +48,17 @@ for _, row in df.iterrows():
         except (ValueError, SyntaxError):
             print(f"Skipping invalid coordinates: {row['Snapped_Coords']}")
 
-# Add the FeatureGroups to the map
+# Add layers to map
 m.add_child(car_layer)
 m.add_child(walk_layer)
 m.add_child(bicycle_layer)
 
-# Add LayerControl to toggle the layers
-folium.LayerControl(collapsed=False).add_to(m)
+# Add LayerControl
+folium.LayerControl(collapsed=False, position='bottomright').add_to(m)
 
-# Save the map as an HTML file
-m.save('map_with_interactive_layers.html')
+# Link the external CSS file
+css_link = '<link rel="stylesheet" href="styles.css" type="text/css">'
+m.get_root().html.add_child(folium.Element(css_link))
+
+# Save the map
+m.save("map.html")

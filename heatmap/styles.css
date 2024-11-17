@@ -1,0 +1,73 @@
+/* Hide the base layer section (e.g., cartodbpositron) */
+.leaflet-control-layers-base {
+    display: none !important;
+}
+
+/* Remove the separator */
+.leaflet-control-layers-separator {
+    display: none !important;
+}
+
+/* Style the checkboxes and align text */
+.leaflet-control-layers-overlays label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Custom checkbox styles */
+.leaflet-control-layers-overlays label span input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 2px solid #000; /* Default border */
+    background-color: #fff; /* Default background */
+    position: relative;
+}
+
+/* Checkbox colors for each mode */
+.leaflet-control-layers-overlays label:nth-child(1) span input[type="checkbox"] {
+    background-color: #2196F3; /* Blue for Car */
+    /* border-color: #2196F3; */
+}
+.leaflet-control-layers-overlays label:nth-child(2) span input[type="checkbox"] {
+    background-color: #4CAF50; /* Green for Walk */
+    /* border-color: #4CAF50; */
+}
+.leaflet-control-layers-overlays label:nth-child(3) span input[type="checkbox"] {
+    background-color: #FFC107; /* Yellow for Bicycle */
+    /* border-color: #FFC107; */
+}
+
+/* Add checkmark when the checkbox is checked */
+.leaflet-control-layers-overlays label span input[type="checkbox"]:checked::after {
+    /* content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px; */
+    background-color: #fff;
+    /* border-radius: 50%;
+    border: 3px solid #fff; White checkmark border */
+}
+
+/* Change background color when unchecked */
+.leaflet-control-layers-overlays label span input[type="checkbox"]:not(:checked) {
+    background-color: #fff;
+    border-color: #000;
+}
+
+.leaflet-control-layers-overlays label span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1.2rem; /* Increase text size */
+    line-height: 1.5; /* Adjust line height for better alignment */
+    font-weight: bold;
+}
