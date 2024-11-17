@@ -77,6 +77,13 @@ if selected == "Home":
 from heatmap import createMap
 from streamlit_folium import st_folium
 
+css_file_path = "./styles.css"
+with open(css_file_path, "r") as file:
+    css = file.read()
+
+# Inject the CSS into the Streamlit app
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 # MAPS
 if selected == "Maps":
     m = createMap()
