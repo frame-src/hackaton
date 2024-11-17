@@ -16,7 +16,7 @@ st.set_page_config(
 # with st.sidebar:
 selected = option_menu(
     menu_title=None,
-    options=["Home", "Maps", "Achievments"],
+    options=["Home", "Maps", "Activity"],
     icons=["house", "book", "activity"],
     menu_icon="cast",
     default_index=0,
@@ -35,7 +35,7 @@ if selected == "Home":
 	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
 	# Read the CSV file
-	df = pd.read_csv("./content/ID_163.csv")
+	df = pd.read_csv("./content/ID_363.csv")
 	length = round(lengthCalculator(df))
 	petrol_consumption =  round(moneySavedPetrol(length))
 	electric_consumption = round(moneySavedElectric(length))
@@ -48,11 +48,11 @@ if selected == "Home":
 		if row['Mode'] == 'car':
 			df.at[_, 'CO2_kg'] = row['CO2_kg']
 		else:
-			df.at[_, 'CO2_kg'] = row['CO2_kg'] * -15
+			df.at[_, 'CO2_kg'] = row['CO2_kg'] * -1
 
 	# Get the minimum and maximum timestamps for the whole day
-	min_timestamp = df['StartedAt_Timestamp'].min().replace(hour=4, minute=0, second=1)
-	max_timestamp = df['StartedAt_Timestamp'].max().replace(hour=20, minute=59, second=59)
+	min_timestamp = df['StartedAt_Timestamp'].min().replace(hour=1, minute=0, second=1)
+	max_timestamp = df['StartedAt_Timestamp'].max().replace(hour=23, minute=59, second=59)
 
     # Add an initial row with a timestamp just before the first data point and set the CO2_kg value to 0
 	first_data_timestamp = df['StartedAt_Timestamp'].min()
@@ -112,12 +112,82 @@ if selected == "Maps":
     st.title("MAPS")
 
 
-
-
-
 #PROFILE or ACTIVITIES or ACHIEVMENTS
 if selected == "Activity":
-    st.title("PROFILE")
+
+	# Title and description
+    st.title("Eco Challenges: Be a Green Transport Hero!")
+    st.subheader("Join the movement to save the planet while having fun 🌍")
+
+	# User inputs
+    username = st.text_input("Enter your name to start:")
+    if username:
+       st.success(f"Welcome, {username}! Ready for some eco challenges?")
+
+	# Challenges Menu
+    st.sidebar.title("Select Your Challenge")
+    challenge = st.sidebar.radio("Pick one challenge:", 
+								["EcoHero Dash", "Penguin Saver Marathon", "Carbon Ninja Challenge", "Mode Switch Master"])
+
+	# EcoHero Dash
+    if challenge == "EcoHero Dash":
+        st.header("🏆 EcoHero Dash")
+        st.write("""
+        🌟 **Objective:** Use green transportation (bike, bus, walk, etc.) to collect eco-points.  
+        🚴 Earn 10 points per green trip, 20 points for carpooling!  
+        """)
+        
+        trips = st.number_input("Enter the number of green trips you completed:", 0, 100, step=1)
+        carpool = st.number_input("Enter the number of carpool trips you participated in:", 0, 100, step=1)
+        
+        eco_points = trips * 10 + carpool * 20
+        st.metric("Your EcoHero Points", eco_points)
+
+        # Penguin Saver Marathon
+    elif challenge == "Penguin Saver Marathon":
+        st.header("🐧 Penguin Saver Marathon")
+        st.write("""
+        🐧 **Objective:** Save penguins by reducing your carbon footprint.  
+        🌟 Walk, bike, or take public transport to save the ice caps!  
+        """)
+
+        distance = st.number_input("Enter the total eco-friendly distance traveled (in km):", 0.0, 500.0, step=0.5)
+        penguins_saved = int(distance / 5)  # Each 5 km saves 1 penguin
+        st.metric("Penguins Saved", penguins_saved)
+
+    # Carbon Ninja Challenge
+    elif challenge == "Carbon Ninja Challenge":
+        st.header("🥷 Carbon Ninja Challenge")
+        st.write("""
+        🥷 **Objective:** Become a stealthy Carbon Ninja by leaving the smallest footprint.  
+        🌟 Combine modes creatively to minimize CO₂ emissions!  
+        """)
+        
+        modes = st.multiselect("Select the eco modes you used today:", 
+                            ["Walking", "Biking", "Bus", "Train", "Carpooling"])
+        
+        st.write("🌟 Modes Used:", ", ".join(modes))
+        carbon_score = len(modes) * 10  # 10 points per mode
+        st.metric("Carbon Ninja Score", carbon_score)
+
+    # Mode Switch Master
+    elif challenge == "Mode Switch Master":
+        st.header("🤸 Mode Switch Master")
+        st.write("""
+        🤸 **Objective:** Use as many eco modes as possible in a single day or week.  
+        🚴 Earn badges for creative and frequent switches!  
+        """)
+        
+        switches = st.number_input("Enter the number of mode switches in your trips today:", 0, 50, step=1)
+        st.metric("Mode Switch Count", switches)
+        
+        if switches >= 3:
+            st.success("🏅 You've unlocked the **Eco-Gymnast Badge**!")
+
+        # Footer
+        st.sidebar.title("About")
+        st.sidebar.info("This app promotes eco-friendly transportation. Track your progress and compete with friends!")
+
 
 
 
