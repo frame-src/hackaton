@@ -30,12 +30,13 @@ def copyAndFill(toFill: any, toFillWith: any):
     new = pd.concat([toFill,], ignore_index=True)
     return new
 
+df = pd.read_csv("./content/ID_363.csv")
+
 # HOME
 if selected == "Home":
 	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
 	# Read the CSV file
-	df = pd.read_csv("./content/ID_363.csv")
 	length = round(lengthCalculator(df))
 	petrol_consumption =  round(moneySavedPetrol(length))
 	electric_consumption = round(moneySavedElectric(length))
@@ -120,13 +121,13 @@ if selected == "Activity":
     st.subheader("Join the movement to save the planet while having fun 🌍")
 
 	# User inputs
-    username = st.text_input("Enter your name to start:")
+    username = "Tomek"
     if username:
        st.success(f"Welcome, {username}! Ready for some eco challenges?")
 
 	# Challenges Menu
-    st.sidebar.title("Select Your Challenge")
-    challenge = st.sidebar.radio("Pick one challenge:", 
+    "Select Your Challenge"
+    challenge = st.radio("Pick one challenge:", 
 								["EcoHero Dash", "Penguin Saver Marathon", "Carbon Ninja Challenge", "Mode Switch Master"])
 
 	# EcoHero Dash
@@ -137,10 +138,16 @@ if selected == "Activity":
         🚴 Earn 10 points per green trip, 20 points for carpooling!  
         """)
         
-        trips = st.number_input("Enter the number of green trips you completed:", 0, 100, step=1)
-        carpool = st.number_input("Enter the number of carpool trips you participated in:", 0, 100, step=1)
+        trips = []
+        for modes in df['Mode']:
+            if modes != 'car':
+                trips.append(modes)
+
+        st.write(f"Number of green trips you completed:{len(trips)}")
+        # carpool = st.number_input("Number of carpool trips you participated in:", 0, 100, step=1)
         
-        eco_points = trips * 10 + carpool * 20
+        eco_points = len(trips) * 10 
+        # + carpool * 20
         st.metric("Your EcoHero Points", eco_points)
 
         # Penguin Saver Marathon
@@ -151,7 +158,9 @@ if selected == "Activity":
         🌟 Walk, bike, or take public transport to save the ice caps!  
         """)
 
-        distance = st.number_input("Enter the total eco-friendly distance traveled (in km):", 0.0, 500.0, step=0.5)
+        distance = lengthCalculator(df)
+
+        st.write(f"Total eco-friendly distance traveled (in km):{distance / 5}")
         penguins_saved = int(distance / 5)  # Each 5 km saves 1 penguin
         st.metric("Penguins Saved", penguins_saved)
 
@@ -163,12 +172,16 @@ if selected == "Activity":
         🌟 Combine modes creatively to minimize CO₂ emissions!  
         """)
         
-        modes = st.multiselect("Select the eco modes you used today:", 
-                            ["Walking", "Biking", "Bus", "Train", "Carpooling"])
+        modes = df['Mode'].unique()
+        car_mode_count = 0
+        if 'car' in modes:
+            car_mode_count = 1
+        amount_of_modes = len(modes) - car_mode_count
+        amount_of_modes
         
-        st.write("🌟 Modes Used:", ", ".join(modes))
-        carbon_score = len(modes) * 10  # 10 points per mode
-        st.metric("Carbon Ninja Score", carbon_score)
+        st.write("🌟 Modes Used:", ", ".join(amount_of_modes))
+        carbon_score = len(amount_of_modes) * 10  # 10 points per mode
+        st.metric("Carbon Ninja Score", amount_of_modes)
 
     # Mode Switch Master
     elif challenge == "Mode Switch Master":
@@ -178,7 +191,7 @@ if selected == "Activity":
         🚴 Earn badges for creative and frequent switches!  
         """)
         
-        switches = st.number_input("Enter the number of mode switches in your trips today:", 0, 50, step=1)
+        switches = st.number_input("Number of mode switches in your trips today:", 0, 50, step=1)
         st.metric("Mode Switch Count", switches)
         
         if switches >= 3:
