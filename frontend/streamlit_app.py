@@ -109,7 +109,7 @@ from streamlit_folium import st_folium
 
 # MAPS
 if selected == "Maps":
-	with open("your_page.html", "r") as f:
+	with open("map.html", "r") as f:
 		html_content = f.read()
 
 	# Display the HTML content
