@@ -119,8 +119,7 @@ if selected == "Maps":
 
 	# Inject the CSS into the Streamlit app
 	st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-    
-
+	st.components.v1.html(map_string)
 
 
 #PROFILE or ACTIVITIES or ACHIEVMENTS
