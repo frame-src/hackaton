@@ -8,7 +8,7 @@ def createMap():
     import ast
     import pandas as pd
 
-    df = pd.read_csv('snapped_data.csv')
+    df = pd.read_csv('./content/snapped_data.csv')
 
     MIN_LAT = 49.1030
     MAX_LAT = 49.1920
