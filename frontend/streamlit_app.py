@@ -30,7 +30,9 @@ def copyAndFill(toFill: any, toFillWith: any):
     new = pd.concat([toFill,], ignore_index=True)
     return new
 
-df = pd.read_csv("./content/ID_363.csv")
+# df = pd.read_csv("./content/ID_363.csv")
+df = pd.read_csv("./content/combined_df.csv")
+
 
 # HOME
 if selected == "Home":
@@ -128,14 +130,14 @@ if selected == "Activity":
 	# Challenges Menu
     "Select Your Challenge"
     challenge = st.radio("Pick one challenge:", 
-								["EcoHero Dash", "Penguin Saver Marathon", "Carbon Ninja Challenge", "Mode Switch Master"])
+								["EcoHero Dash", "Penguin Saver Marathon", "Carbon Ninja Challenge"])
 
 	# EcoHero Dash
     if challenge == "EcoHero Dash":
         st.header("🏆 EcoHero Dash")
         st.write("""
-        🌟 **Objective:** Use green transportation (bike, bus, walk, etc.) to collect eco-points.  
-        🚴 Earn 10 points per green trip, 20 points for carpooling!  
+        🌟 **Objective:** Use green transportation like \nbike, bus, walk, etc. to collect eco-points.  
+        🚴 Earn 10 points per green trip!  
         """)
         
         trips = []
@@ -149,6 +151,8 @@ if selected == "Activity":
         eco_points = len(trips) * 10 
         # + carpool * 20
         st.metric("Your EcoHero Points", eco_points)
+        if len(trips) >= 3:
+            st.success("🏅 You've unlocked the **EcoHero Dash Challenge**!")
 
         # Penguin Saver Marathon
     elif challenge == "Penguin Saver Marathon":
@@ -163,39 +167,31 @@ if selected == "Activity":
         st.write(f"Total eco-friendly distance traveled (in km):{distance / 5}")
         penguins_saved = int(distance / 5)  # Each 5 km saves 1 penguin
         st.metric("Penguins Saved", penguins_saved)
+        if penguins_saved >= 1:
+            st.success("🏅 You've unlocked the **Penguin Saver Marathon**!")
+        for i in range(0, penguins_saved):
+                st.success("🐧")
 
     # Carbon Ninja Challenge
     elif challenge == "Carbon Ninja Challenge":
-        st.header("🥷 Carbon Ninja Challenge")
+        st.header(" Carbon Ninja Challenge")
         st.write("""
-        🥷 **Objective:** Become a stealthy Carbon Ninja by leaving the smallest footprint.  
+        🤸 **Objective:** Become a stealthy Carbon Ninja by leaving the smallest footprint.  
         🌟 Combine modes creatively to minimize CO₂ emissions!  
         """)
         
-        modes = df['Mode'].unique()
-        car_mode_count = 0
-        if 'car' in modes:
-            car_mode_count = 1
-        amount_of_modes = len(modes) - car_mode_count
-        amount_of_modes
+        trips = []
+        for modes in df['Mode']:
+            if modes != 'car':
+                trips.append(modes)
+        amount_of_modes = set(trips)
         
-        st.write("🌟 Modes Used:", ", ".join(amount_of_modes))
+        st.write(f"🌟 Modes Used: {len(amount_of_modes)}")
         carbon_score = len(amount_of_modes) * 10  # 10 points per mode
-        st.metric("Carbon Ninja Score", amount_of_modes)
-
-    # Mode Switch Master
-    elif challenge == "Mode Switch Master":
-        st.header("🤸 Mode Switch Master")
-        st.write("""
-        🤸 **Objective:** Use as many eco modes as possible in a single day or week.  
-        🚴 Earn badges for creative and frequent switches!  
-        """)
+        st.metric("Carbon Ninja Score", len(amount_of_modes))
         
-        switches = st.number_input("Number of mode switches in your trips today:", 0, 50, step=1)
-        st.metric("Mode Switch Count", switches)
-        
-        if switches >= 3:
-            st.success("🏅 You've unlocked the **Eco-Gymnast Badge**!")
+        if len(amount_of_modes) >= 2:
+            st.success("🏅 You've unlocked the **Carbon Ninja Challenge**!")
 
         # Footer
         st.sidebar.title("About")
