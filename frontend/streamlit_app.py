@@ -4,14 +4,13 @@ import pandas as pd
 import streamlit as st
 from streamlit_option_menu import option_menu
 import requests
-from utils import lengthCalculator,moneySavedPetrol, moneySavedElectric
+from utils import lengthCalculator,moneySavedPetrol, moneySavedElectric, caloriesBurned, hoursOutdoors, foodAmountForCalories
 from datetime import datetime, timedelta
 
 st.set_page_config(
     layout='wide',
     page_title='MFT'
 )
-
 
 # with st.sidebar:
 selected = option_menu(
@@ -23,23 +22,20 @@ selected = option_menu(
     orientation="horizontal"
 )
 
-
-def copyAndFill(toFill: any, toFillWith: any):
-    copyToFillWith = toFillWith.copy()
-    copyToFillWith['CO2_kg'] = 0
-    new = pd.concat([toFill,], ignore_index=True)
-    return new
-
 df = pd.read_csv("./content/ID_363.csv")
+length = round(lengthCalculator(df))
+petrol_consumption =  round(moneySavedPetrol(length))
+electric_consumption = round(moneySavedElectric(length))
+cal = round( caloriesBurned(length))
+hours = round( hoursOutdoors(length, 19))
+food = foodAmountForCalories(length)
 
 # HOME
 if selected == "Home":
 	st.markdown("<h1 style='text-align: center; color: grey;'>Welcome to MFT</h1>", unsafe_allow_html=True)
 
 	# Read the CSV file
-	length = round(lengthCalculator(df))
-	petrol_consumption =  round(moneySavedPetrol(length))
-	electric_consumption = round(moneySavedElectric(length))
+
 	st.markdown(f"<h5 style='text-align: center; color: lightcoral;'>Consuption of CO2 : </h4>", unsafe_allow_html=True)
     
 	df['StartedAt_Timestamp'] = pd.to_datetime(df['StartedAt_Timestamp'])
@@ -91,7 +87,7 @@ if selected == "Home":
 		y='y:Q'
 	)
 	text = alt.Chart(pd.DataFrame({'y': [-0.35], 'text': ['Your daily goal of CO2 reduction']})).mark_text(
-		align='left', dx=5, dy=-5, color='black'
+		align='right', dx=5, dy=-5, color='grey'
 	).encode(
 		y='y:Q',
 		text='text:N'
@@ -119,10 +115,8 @@ with open(rendered_map, "r") as file:
 
 # MAPS
 if selected == "Maps":
-    # m = createMap()
-    html_string = map_ready
-    st.markdown(html_string, unsafe_allow_html=True)
-    # st_folium(m, width=430)
+    m = createMap()
+    st_folium(m, width=430)
 
 
 
